@@ -7,6 +7,8 @@ import com.irahul.tbtf.entity.User;
 public interface UserService {
 	
 	User addUser(User user);
+	
+	void updateUser(User user);
 
 	User getUser(long userId);
 	

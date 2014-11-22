@@ -1,5 +1,7 @@
 package com.irahul.tbtf.entity;
 
+import java.util.List;
+
 /**
  * A bank customer
  * @author rahul
@@ -13,4 +15,11 @@ public interface User {
 	String getPin();
 	
 	Address getAddress();
+	
+	/**
+	 * All locations where this user has a bank account
+	 * @return
+	 */
+	List<BankLocation> getAccountLocations();
+	void addAccountLocation(BankLocation accountLocation);
 }

@@ -73,6 +73,12 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
+	public void updateUser(User user) {
+		userRepository.update(user);
+	}	
+	
+	@Override
+	@Transactional
 	public List<User> getUsers(String firstName, String lastName) {
 		List<User> returnList = new ArrayList<>();
 		if(StringUtils.isEmpty(firstName) && StringUtils.isEmpty(lastName)){
@@ -95,5 +101,5 @@ public class UserServiceImpl implements UserService {
 		
 		//TODO - this needs to be handled better
 		throw new IllegalArgumentException("Server fail");
-	}	
+	}
 }

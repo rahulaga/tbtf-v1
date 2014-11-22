@@ -41,4 +41,9 @@ public class UserRepositoryImpl implements UserRepository {
 		List<User> searchResult = crit.list();		
 		return searchResult;
 	}
+
+	@Override
+	public void update(User user) {
+		this.sessionFactory.getCurrentSession().update(user);		
+	}
 }

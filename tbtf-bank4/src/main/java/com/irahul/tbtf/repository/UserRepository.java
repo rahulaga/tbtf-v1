@@ -17,4 +17,6 @@ public interface UserRepository {
 	
 	List<User> search(String firstName, String lastName);
 
+	void update(User user);
+
 }
