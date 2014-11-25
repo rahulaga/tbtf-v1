@@ -13,12 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.irahul.tbtf.entity.Address;
 import com.irahul.tbtf.entity.BankLocation;
 import com.irahul.tbtf.entity.User;
+import com.irahul.tbtf.entity.UserAuditHistory;
 
 @Entity
 @Table(name="users")
@@ -41,9 +43,12 @@ public class UserImpl implements User {
 	private Address address;
 	
 	@ManyToMany(targetEntity=BankLocationImpl.class, fetch=FetchType.EAGER)
-	@JoinTable(name="users_account_location", joinColumns = { @JoinColumn(name = "users_idusers", nullable = false, updatable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "bank_location_idbank_location", nullable = false, updatable = false) })
+	@JoinTable(name="users_account_location", joinColumns = { @JoinColumn(name = "users_idusers", nullable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "bank_location_idbank_location", nullable = false) })
 	private List<BankLocation> accountLocations;
+	
+	@OneToMany(mappedBy = "user", targetEntity=UsersAuditHistoryImpl.class, cascade=CascadeType.ALL)	
+    private List<UserAuditHistory> userAuditHistory;
 	
 	public UserImpl(){}		
 
@@ -99,10 +104,21 @@ public class UserImpl implements User {
 		accountLocations.add(accountLocation);
 	}
 
+	public List<UserAuditHistory> getUserAuditHistory() {
+		return userAuditHistory;
+	}
+
+	public void addUserAuditHistory(UserAuditHistory userAuditHistory) {
+		if(this.userAuditHistory==null){
+			this.userAuditHistory = new ArrayList<UserAuditHistory>();
+		}
+		this.userAuditHistory.add(userAuditHistory);
+	}
+
 	@Override
 	public String toString() {
 		return "UserImpl [id=" + id + ", firstName=" + firstName
 				+ ", lastName=" + lastName + ", pin=" + pin + ", addressId="
-				+ address + "]";
+				+ address +"]";
 	}
 }

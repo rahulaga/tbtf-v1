@@ -24,6 +24,8 @@ public interface BankLocation {
 	 * @return
 	 */
 	List<User> getUsers();
-
 	void addUser(User user); 
+	
+	List<UserAuditHistory> getUserAuditHistory();
+	void addUserAuditHistory(UserAuditHistory userAuditHistory);
 }

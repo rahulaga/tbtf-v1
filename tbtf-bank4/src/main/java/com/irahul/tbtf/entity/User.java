@@ -22,4 +22,7 @@ public interface User {
 	 */
 	List<BankLocation> getAccountLocations();
 	void addAccountLocation(BankLocation accountLocation);
+	
+	List<UserAuditHistory> getUserAuditHistory();
+	void addUserAuditHistory(UserAuditHistory userAuditHistory);
 }

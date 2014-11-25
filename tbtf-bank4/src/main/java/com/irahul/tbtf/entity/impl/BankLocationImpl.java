@@ -3,6 +3,7 @@ package com.irahul.tbtf.entity.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,10 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.irahul.tbtf.entity.BankLocation;
 import com.irahul.tbtf.entity.User;
+import com.irahul.tbtf.entity.UserAuditHistory;
 /**
  * Bank locations
  * @author rahul
@@ -39,6 +42,9 @@ public class BankLocationImpl implements BankLocation {
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountLocations", targetEntity=UserImpl.class)	
 	private List<User> users;
+	
+	@OneToMany(mappedBy = "bankLocation", targetEntity=UsersAuditHistoryImpl.class, cascade=CascadeType.ALL)	
+    private List<UserAuditHistory> userAuditHistory;
 
 	@Override
 	public String getName() {
@@ -73,10 +79,21 @@ public class BankLocationImpl implements BankLocation {
 		}
 		users.add(user);
 	}
+	
+	public List<UserAuditHistory> getUserAuditHistory() {
+		return userAuditHistory;
+	}
+
+	public void addUserAuditHistory(UserAuditHistory userAuditHistory) {
+		if(this.userAuditHistory==null){
+			this.userAuditHistory = new ArrayList<UserAuditHistory>();
+		}
+		this.userAuditHistory.add(userAuditHistory);
+	}
 
 	@Override
 	public String toString() {
 		return "BankLocationImpl [id=" + id + ", name=" + name + ", type="
-				+ type + ", usersSize=" + users.size() + "]";
+				+ type + ", usersSize=" + users.size() +"]";
 	}
 }

@@ -1,5 +1,6 @@
 package com.irahul.tbtf.service;
 
+import java.util.Date;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -8,16 +9,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.irahul.tbtf.entity.BankLocation;
 import com.irahul.tbtf.entity.User;
+import com.irahul.tbtf.entity.UserAuditHistory.Type;
 import com.irahul.tbtf.entity.impl.AddressImpl;
 import com.irahul.tbtf.entity.impl.BankLocationImpl;
 import com.irahul.tbtf.entity.impl.UserImpl;
+import com.irahul.tbtf.entity.impl.UsersAuditHistoryImpl;
 
 @ContextConfiguration(locations = {"classpath:spring-context.xml"})
-public class TestUserService extends AbstractJUnit4SpringContextTests  {
+public class TestUserService extends AbstractTransactionalJUnit4SpringContextTests  {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
@@ -111,10 +114,47 @@ public class TestUserService extends AbstractJUnit4SpringContextTests  {
 		User lookupUser2 = userService.getUser(user2.getId());
 		
 		Assert.assertEquals(2,lookupUser1.getAccountLocations().size());
-		Assert.assertEquals(1,lookupUser2.getAccountLocations().size());
+		Assert.assertEquals(1,lookupUser2.getAccountLocations().size());		
+	}
+	
+	@Test
+	public void testUserAuditHistory(){
+		User user1 = createUser();
+		User user2 = createUser();
+		
+		BankLocation location1 = createLocation();
+		BankLocation location2 = createLocation();
+		
+		UsersAuditHistoryImpl audit1 = new UsersAuditHistoryImpl();
+		audit1.setBankLocation(location1);
+		audit1.setOperation(Type.CASH_WITHDRAW);
+		audit1.setOperationDateTime(new Date());
+		audit1.setUser(user1);		
+		user1.addUserAuditHistory(audit1);
+		
+		UsersAuditHistoryImpl audit2 = new UsersAuditHistoryImpl();
+		audit2.setBankLocation(location1);
+		audit2.setOperation(Type.CHECK_DEPOSIT);
+		audit2.setOperationDateTime(new Date());
+		audit2.setUser(user1);
+		user1.addUserAuditHistory(audit2);
+		
+		UsersAuditHistoryImpl audit3 = new UsersAuditHistoryImpl();
+		audit3.setBankLocation(location2);
+		audit3.setOperation(Type.CHECK_DEPOSIT);
+		audit3.setOperationDateTime(new Date());
+		audit3.setUser(user2);
+		user2.addUserAuditHistory(audit3);
 		
 		
+		userService.updateUser(user1);		
+		userService.updateUser(user2);
 		
+		User lookupUser1 = userService.getUser(user1.getId());
+		User lookupUser2 = userService.getUser(user2.getId());
+			
+		Assert.assertEquals(2,lookupUser1.getUserAuditHistory().size());
+		Assert.assertEquals(1,lookupUser2.getUserAuditHistory().size());		
 	}
 
 	private BankLocation createLocation() {
